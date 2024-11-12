@@ -6,14 +6,20 @@ import SignUp from './components/auth/SignUp';
 import Menu from './components/Menu';
 import HomePage from './components/HomePage';
 
+import Landing from './components/Landing';
+
 import { AuthProvider } from './contexts/AuthContext';
 import { useRoutes } from 'react-router-dom';
 
 function App() {
   const routesArray = [
     {
-      path: "*",
-      element: <Login />,
+      path: "/",
+      element: <Landing />,
+    },
+    {
+      path: "/landing",
+      element: <Landing />,
     },
     {
       path: "/login",
@@ -31,7 +37,7 @@ function App() {
   let routesElement = useRoutes(routesArray);
   return (
       <AuthProvider>
-        <Menu />
+        {/* <Menu /> */}
         <div className="w-full h-screen flex flex-col">{routesElement}</div>
       </AuthProvider>
   );
