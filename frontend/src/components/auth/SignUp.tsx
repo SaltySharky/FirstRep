@@ -45,6 +45,7 @@ const SignUp = () => {
                             <input
                                 type="email"
                                 autoComplete='email'
+                                placeholder="Email"
                                 required
                                 value={email} onChange={(e) => { setEmail(e.target.value) }}
                             />
@@ -58,6 +59,7 @@ const SignUp = () => {
                                 disabled={isRegistering}
                                 type="password"
                                 autoComplete='new-password'
+                                placeholder="Password"
                                 required
                                 value={password} onChange={(e) => { setPassword(e.target.value) }}
                             />
@@ -71,6 +73,7 @@ const SignUp = () => {
                                 disabled={isRegistering}
                                 type="password"
                                 autoComplete='off'
+                                placeholder="Confirm Password"
                                 required
                                 value={confirmPassword} onChange={(e) => { setconfirmPassword(e.target.value) }}
                             />
