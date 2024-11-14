@@ -1,17 +1,33 @@
-name: Unit Tests # name of the test
+name: Frontend Test
 
 on:
- push:
-   branches: [ StarterCodeDrafts ]  # or 'master' if that's your primary branch name
- pull_request:
-   branches: [ StarterCodeDrafts ] # the Github Action will activate "on" the event that you "push" to the repo
+  push:
+    branches: [main]  # Trigger on push to the 'main' branch
+  pull_request:
+    branches: [main]  # Trigger on pull request targeting the 'main' branch
 
-jobs: # the things being executed
- tests: # the name of your status check, will become important when you do branch protection
-   runs-on: ubuntu-latest # which device on Github's server that you are running the Actions on
-   steps:
-     - uses: actions/checkout@v4 # using version 4 of Actions
-     - name: Install Dependencies
-       run: npm install
-     - name: Unit Test
-       run: npm run test # the actual testing line
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4  # Checkout the repository's code
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3  # Set up Node.js environment
+        with:
+          node-version: '22'
+
+      - name: Install dependencies (backend)
+        run: npm install
+
+      - name: Install dependencies (frontend)
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Run frontend tests
+        run: |
+          cd frontend
+          npm run test
