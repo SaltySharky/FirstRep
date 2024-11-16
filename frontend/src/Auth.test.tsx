@@ -13,7 +13,7 @@ describe("Sign Up page", () => {
         <SignUp />
       </BrowserRouter>
     )
-    expect(screen.getByText("Email")).toBeInTheDocument()
+    expect(screen.getByPlaceholderText("Email")).toBeInTheDocument()
   })
 
   test("Sign Up page renders with password and confirm password parameters", () => {
@@ -22,8 +22,8 @@ describe("Sign Up page", () => {
         <SignUp />
       </BrowserRouter>
     )
-    expect(screen.getByText("Password")).toBeInTheDocument()
-    expect(screen.getByText("Confirm Password")).toBeInTheDocument()
+    expect(screen.getByPlaceholderText("Password")).toBeInTheDocument()
+    expect(screen.getByPlaceholderText("Confirm Password")).toBeInTheDocument()
   })
 
 
@@ -43,12 +43,12 @@ describe("Sign Up page", () => {
     const emailInput = screen.getByPlaceholderText("Email")
     const passwordInput = screen.getByPlaceholderText("Password")
     const passwordConfirmInput = screen.getByPlaceholderText("Confirm Password")
-    const signUpButton = screen.getByText("Sign Up")
+    const signUpButton = screen.getAllByText("Continue")
 
     fireEvent.change(emailInput, {target: {value: "jennifer@yahoo.com"}})
     fireEvent.change(passwordInput, {target: {value: "jen1234567"}})
     fireEvent.change(passwordConfirmInput, {target: {value: "jen1234567"}})
-    fireEvent.click(signUpButton)
+    fireEvent.click(signUpButton[0])
   })
 })
 
@@ -59,7 +59,7 @@ describe("Login page", () => {
         <Login />
       </BrowserRouter>
     )
-    expect(screen.getByText("Email")).toBeInTheDocument()
+    expect(screen.getByPlaceholderText("Email")).toBeInTheDocument()
   })
 
   test("Login page renders with password paramter", () => {
@@ -68,7 +68,7 @@ describe("Login page", () => {
         <Login />
       </BrowserRouter>
     )
-    expect(screen.getByText("Password")).toBeInTheDocument()
+    expect(screen.getByPlaceholderText("Password")).toBeInTheDocument()
   })
 
   test("Login page renders with Google auth option", () => {
@@ -89,10 +89,10 @@ describe("Login page", () => {
 
     const emailInput = screen.getByPlaceholderText("Email")
     const passwordInput = screen.getByPlaceholderText("Password")
-    const loginButton = screen.getByText("Sign In")
+    const loginButton = screen.getAllByText("Login")
 
     fireEvent.change(emailInput, {target: {value: "ferris@gmail.com"}})
     fireEvent.change(passwordInput, {target: {value: "fer1234567"}})
-    fireEvent.click(loginButton)
+    fireEvent.click(loginButton[1])
   })
 })

@@ -18,7 +18,10 @@ const SignUp = () => {
         e.preventDefault();
         if (!isRegistering) {
             setIsRegistering(true);
-            await doCreateUserWithEmailAndPassword(email, password);
+            if (password == confirmPassword) {
+                await doCreateUserWithEmailAndPassword(email, password);
+            }
+            
         }
     };
 
@@ -73,6 +76,19 @@ const SignUp = () => {
                                 disabled={isRegistering}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                            />
+                        </div>
+
+                        <div>
+                            <input
+                                type="password"
+                                placeholder="Confirm Password"
+                                autoComplete="new-password"
+                                required
+                                disabled={isRegistering}
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                                 className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                             />
                         </div>
