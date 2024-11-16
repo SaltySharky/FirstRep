@@ -56,7 +56,7 @@ const Login = () => {
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500"
                         />
                     </div>
-
+                  
                     <div className="relative">
                         <input
                             type="password"

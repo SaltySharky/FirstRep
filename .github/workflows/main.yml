@@ -1,0 +1,33 @@
+name: Frontend Test
+
+on:
+  push:
+    branches: [main]  # Trigger on push to the 'main' branch
+  pull_request:
+    branches: [main]  # Trigger on pull request targeting the 'main' branch
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4  # Checkout the repository's code
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3  # Set up Node.js environment
+        with:
+          node-version: '22'
+
+      - name: Install dependencies (backend)
+        run: npm install
+
+      - name: Install dependencies (frontend)
+        run: |
+          cd frontend
+          npm install
+
+      - name: Run frontend tests
+        run: |
+          cd frontend
+          npm run test
