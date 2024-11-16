@@ -4,100 +4,108 @@ import { useAuth } from "../../contexts/AuthContext";
 import { doCreateUserWithEmailAndPassword } from "../../firebase/auth";
 
 const SignUp = () => {
+    const navigate = useNavigate();
 
-    const navigate = useNavigate()
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [isRegistering, setIsRegistering] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setconfirmPassword] = useState('')
-    const [isRegistering, setIsRegistering] = useState(false)
-    const [errorMessage, setErrorMessage] = useState('')
-
-    const { userLoggedIn } = useAuth()
+    const { userLoggedIn } = useAuth();
 
     const onSubmit = async (e) => {
-        e.preventDefault()
-        if(!isRegistering) {
-            setIsRegistering(true)
-            await doCreateUserWithEmailAndPassword(email, password)
+        e.preventDefault();
+        if (!isRegistering) {
+            setIsRegistering(true);
+            await doCreateUserWithEmailAndPassword(email, password);
         }
-    }
+    };
 
     return (
         <>
-            {userLoggedIn && (<Navigate to={'/home'} replace={true} />)}
+            {userLoggedIn && <Navigate to="/home" replace={true} />}
 
-            <main>
-                <div>
-                    <div>
-                        <div>
-                            <h3>Create a New Account</h3>
-                        </div>
+            {/* Back Arrow */}
+            <button onClick={() => navigate('/landing')} className="absolute top-4 left-4 text-xl">
+                ←
+            </button> 
 
+            <main className="flex justify-center items-center min-h-screen bg-white">
+                <div className="w-full max-w-md px-6 py-8">
+                    <div className="mb-6 text-center">
+                        <h3 className="text-xl font-semibold text-gray-800">Sign up</h3>
                     </div>
-                    <form
-                        onSubmit={onSubmit}
-                    >
+                    <form onSubmit={onSubmit} className="space-y-4">
                         <div>
-                            <label>
-                                Email
-                            </label>
+                            <input
+                                type="text"
+                                placeholder="First name"
+                                required
+                                className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                            />
+                        </div>
+                        <div>
+                            <input
+                                type="text"
+                                placeholder="Last name"
+                                required
+                                className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                            />
+                        </div>
+                        <div>
                             <input
                                 type="email"
-                                autoComplete='email'
                                 placeholder="Email"
+                                autoComplete="email"
                                 required
-                                value={email} onChange={(e) => { setEmail(e.target.value) }}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                             />
                         </div>
-
                         <div>
-                            <label>
-                                Password
-                            </label>
                             <input
-                                disabled={isRegistering}
                                 type="password"
-                                autoComplete='new-password'
                                 placeholder="Password"
+                                autoComplete="new-password"
                                 required
-                                value={password} onChange={(e) => { setPassword(e.target.value) }}
-                            />
-                        </div>
-
-                        <div>
-                            <label>
-                                Confirm Password
-                            </label>
-                            <input
                                 disabled={isRegistering}
-                                type="password"
-                                autoComplete='off'
-                                placeholder="Confirm Password"
-                                required
-                                value={confirmPassword} onChange={(e) => { setconfirmPassword(e.target.value) }}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                             />
                         </div>
 
                         {errorMessage && (
-                            <span>{errorMessage}</span>
+                            <span className="text-xs text-red-500">{errorMessage}</span>
                         )}
 
                         <button
                             type="submit"
                             disabled={isRegistering}
+                            className={`w-full py-3 mt-4 text-sm font-medium text-white rounded-lg ${
+                                isRegistering ? "bg-gray-400" : "bg-[#EB853D]"
+                            } focus:outline-none`}
                         >
-                            {isRegistering ? 'Signing Up...' : 'Sign Up'}
+                            {isRegistering ? 'Signing Up...' : 'Continue'}
                         </button>
-                        <div className="text-sm text-center">
-                            Already have an account? {'   '}
-                            <Link to={'/login'}>Continue</Link>
+
+                        <div className="mt-4 text-center text-xs text-gray-600">
+                            By selecting Continue, I agree to the{" "}
+                            <span className="text-orange-600">Terms of Service</span> and the{" "}
+                            <span className="text-orange-600">Privacy Policy</span>.
+                        </div>
+
+                        <div className="text-sm text-center mt-4">
+                            Already have an account?{" "}
+                            <Link to="/login" className="text-blue-500">Continue</Link>
                         </div>
                     </form>
                 </div>
             </main>
         </>
-    )
-}
+    );
+};
 
-export default SignUp
+export default SignUp;
