@@ -8,6 +8,8 @@ import HomePage from './components/HomePage';
 
 import Landing from './components/Landing';
 
+import UserPreferences from './components/UserPreferences';
+
 import { AuthProvider } from './contexts/AuthContext';
 import { useRoutes } from 'react-router-dom';
 
@@ -32,6 +34,10 @@ function App() {
     {
       path: "/home",
       element: <HomePage />,
+    },
+    {
+      path: "/preferences",
+      element: <UserPreferences />,
     },
   ];
   let routesElement = useRoutes(routesArray);
