@@ -31,7 +31,6 @@ export function AuthProvider({ children }) {
     setLoading(false);
   }
 
-  
   useEffect(() => {
     const fetchIdToken = async () => {
       try {
@@ -45,7 +44,7 @@ export function AuthProvider({ children }) {
     fetchIdToken();
 
   }, []);
-
+  
   const value = {
     currentUser,
     userLoggedIn,
