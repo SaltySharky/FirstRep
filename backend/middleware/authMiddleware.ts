@@ -21,7 +21,7 @@ const verifyToken = asyncHandler(async (req: express.Request, res: express.Respo
     res.status(401).json({ error: "Unauthorized" });
   }
 
-  req.user = user;
+//  req.user = user;
 })
 
 export default verifyToken;

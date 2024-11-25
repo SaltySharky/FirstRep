@@ -6,12 +6,15 @@ if (!uri) {
 }
 
 const connectDB = async () => {
-  // Connect to MongoDB
-  mongoose.connect(uri)
-    .then(() => console.log('Connected to MongoDB'))
-    .catch((err) => console.error('Error connecting to MongoDB', err));
-}
+  try {
+    await mongoose.connect(process.env.MONGO_URI as string, {
+    });
+    console.log('MongoDB connected');
+  } catch (err) {
+    console.error('MongoDB connection failed:', err);
+    process.exit(1); // Exit process with failure
+  }
+};
 
 export default connectDB;
-
 

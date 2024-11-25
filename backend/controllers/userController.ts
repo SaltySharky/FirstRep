@@ -2,28 +2,30 @@ import express from "express";
 import asyncHandler from "express-async-handler"
 import admin from "../config/firebaseAdmin"
 import User from "../models/userModel";
-
+import mongoose from "mongoose";
 // @desc    Register new user
 // @route   POST /api/users/signup
 // @access  Public
 export const registerUser = asyncHandler(async (req: express.Request, res: express.Response) => {
-  const { name, email, password } = req.body; // destruct the request
-  if (!name || !email || !password) { // validate request
+  const { user_id, email, password } = req.body; // destruct the request
+  console.log(user_id, email, password);
+  if (!user_id || !email || !password) { // validate request
     res.status(400)
     throw new Error("Please enter all info.");
   }
 
   // Check if user already exists
-  const userExists = await User.findOne({email}) // find user email in the database
+  const userEmailExists = await User.findOne({email}) // find user email in the database
+  const userIdExists = await User.findOne({user_id}) // find user email in the database
 
-  if (userExists) { // if email is found in the database
+  if (userEmailExists || userIdExists) { // if email is found in the database
     res.status(400)
     throw new Error("User already exists");
   }
 
   // Create new user
   const user = await User.create({
-    name,
+    user_id,
     email,
     password,
   })
@@ -31,9 +33,10 @@ export const registerUser = asyncHandler(async (req: express.Request, res: expre
   // Check that user is created
   if (user) {
     res.status(201).json({
-      _id: user.id,
-      name: user.name,
+      user_id: user.user_id,
       email: user.email,
+      password: user.password,
+
     })
   } else {
     res.status(400)
@@ -45,11 +48,11 @@ export const registerUser = asyncHandler(async (req: express.Request, res: expre
 // @route   POST /api/users/login
 // @access  Public
 export const loginUser = asyncHandler(async (req: express.Request, res: express.Response) => {
-  const { email, password } = req.body;
+  const {email, password } = req.body;
 
-  if (!email || !password) { // validate request
+  if (!email) { // validate request
     res.status(400)
-    throw new Error("Please enter all info.");
+    throw new Error("EMAIL issue enter all info.");
   }
 
   const user = await User.findOne({email}); // check user email
