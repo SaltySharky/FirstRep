@@ -27,7 +27,7 @@ const SignUp = () => {
 
     return (
         <>
-            {userLoggedIn && <Navigate to="/home" replace={true} />}
+            {userLoggedIn && <Navigate to="/preferences" replace={true} />}
 
             {/* Back Arrow */}
             <button onClick={() => navigate('/landing')} className="absolute top-4 left-4 text-xl">
