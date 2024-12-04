@@ -17,16 +17,16 @@ const Navbar = () => {
                         Home
                     </Link>
                     <Link
-                        to="/profile"
-                        className="px-4 py-2 bg-[#EB853D] text-white rounded-md hover:bg-[#d67432] transition-all"
-                    >
-                        Profile
-                    </Link>
-                    <Link
                         to="/log"
                         className="px-4 py-2 bg-[#EB853D] text-white rounded-md hover:bg-[#d67432] transition-all"
                     >
                         Log Workout
+                    </Link>
+                    <Link
+                        to="/profile"
+                        className="px-4 py-2 bg-[#EB853D] text-white rounded-md hover:bg-[#d67432] transition-all"
+                    >
+                        Profile
                     </Link>
                 </>
         </nav>

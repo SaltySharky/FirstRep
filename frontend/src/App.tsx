@@ -40,7 +40,7 @@ function App() {
       element: <ProfilePage />
     },
     {
-      path: "log",
+      path: "/log",
       element: <WorkoutLog />
     }
   ];
