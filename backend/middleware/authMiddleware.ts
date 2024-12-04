@@ -1,7 +1,6 @@
 import asyncHandler from "express-async-handler"
 import admin from "../config/firebaseAdmin";
-import express, { NextFunction } from "express";
-import User from "../models/userModel";
+import express, { Request, NextFunction } from "express";
 
 const verifyToken = asyncHandler(async (req: express.Request, res: express.Response, next: NextFunction) => {
   console.log(req.headers);
@@ -21,7 +20,11 @@ const verifyToken = asyncHandler(async (req: express.Request, res: express.Respo
     res.status(401).json({ error: "Unauthorized" });
   }
 
-//  req.user = user;
+  // Attach user to the request
+  req.user = user;
+
+  // Proceed to the next function
+  next();
 })
 
 export default verifyToken;

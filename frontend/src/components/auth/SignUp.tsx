@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Navigate, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { doCreateUserWithEmailAndPassword } from "../../firebase/auth";
+import { addUserToMongo } from "../../services/userServices";
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -19,9 +20,16 @@ const SignUp = () => {
         if (!isRegistering) {
             setIsRegistering(true);
             if (password == confirmPassword) {
-                await doCreateUserWithEmailAndPassword(email, password);
+                try {
+                    const userCredential = await doCreateUserWithEmailAndPassword(email, password); // create user in firebase
+                    const token = await userCredential.user.getIdToken(); // fetch id token
+                    await addUserToMongo(token); // add user to database using token
+                }
+                catch (error) {
+                    console.error("Error during user registration:", error);
+                    setErrorMessage("Registration failed. Please try again.");
+                }
             }
-            
         }
     };
 

@@ -59,7 +59,7 @@ export function AuthProvider({ children }) {
 
     // Cleanup onAuthStateChanged listener on component unmount
     return () => unsubscribe();
-  }, []);
+  }, [token]);
 
   const value = {
     currentUser,
