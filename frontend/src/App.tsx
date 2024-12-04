@@ -11,7 +11,7 @@ import Landing from './components/Landing';
 import { AuthProvider } from './contexts/AuthContext';
 import { useRoutes } from 'react-router-dom';
 import ProfilePage from './components/ProfilePage';
-import WorkoutLog from './components/workoutLog';
+import WorkoutLog from './components/WorkoutLog';
 
 function App() {
   const routesArray = [

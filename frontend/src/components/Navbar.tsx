@@ -21,7 +21,7 @@ const Navbar = () => {
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
         <div className="text-2xl font-bold">
-          <Link to="/" className="hover:text-white">
+          <Link to="/home" className="hover:text-white">
             FirstRep
           </Link>
         </div>
