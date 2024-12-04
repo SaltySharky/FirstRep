@@ -15,6 +15,17 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState('');
 
+
+  const logout = async () => {
+    try {
+      await auth.signOut(); // Sign out using Firebase
+      setCurrentUser(null); // Reset the current user
+    } catch (error) {
+      console.error("Error during logout:", error);
+      throw error;
+    }
+  };
+
   useEffect(()=>{
     return onAuthStateChanged(auth, initializeUser);
   }, [])
@@ -49,7 +60,8 @@ export function AuthProvider({ children }) {
     currentUser,
     userLoggedIn,
     token,
-    loading
+    loading,
+    logout
   }
 
   return (
