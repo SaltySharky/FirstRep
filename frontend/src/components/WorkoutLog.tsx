@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
+import { useAuth } from "../contexts/AuthContext";
 
 interface Workout {
   id: string; // Unique identifier for each workout
@@ -20,6 +21,7 @@ const WorkoutLog = () => {
     duration: "",
     date: "",
   });
+  const { workoutDates, addWorkoutDate, removeWorkoutDate } = useAuth();
 
   // Load workouts from localStorage on mount
   useEffect(() => {
@@ -77,21 +79,35 @@ const WorkoutLog = () => {
   const saveWorkout = () => {
     if (currentWorkoutId) {
       // Update existing workout
+      /*
+      if (workouts.find(Workout => Workout.id === currentWorkoutId).date.toString() !== formData.date) {
+        removeWorkoutDate(workouts.find(Workout => Workout.id === currentWorkoutId).date.toString());
+        addWorkoutDate(formData.date.toString());
+      }
+        */
+
+       removeWorkoutDate(workouts.find(Workout => Workout.id === currentWorkoutId).date.toString())
+       
       setWorkouts((prev) =>
         prev.map((workout) =>
           workout.id === currentWorkoutId ? { ...workout, ...formData } : workout
         )
       );
+
+      addWorkoutDate(formData.date.toString());
+      
     } else {
       // Add new workout
       const newWorkout = { ...formData, id: Date.now().toString() };
       setWorkouts((prev) => [...prev, newWorkout]);
+      addWorkoutDate(newWorkout.date.toString());
     }
     closePopup();
   };
 
   // Delete a workout
   const deleteWorkout = (id: string) => {
+    removeWorkoutDate(workouts.find(Workout => Workout.id === id).date.toString());
     setWorkouts((prev) => prev.filter((workout) => workout.id !== id));
   };
 

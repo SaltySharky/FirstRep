@@ -3,7 +3,7 @@ import { auth } from "../firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { dummyAuth } from "../constants";
 //import API from './api';
-const AuthContext = React.createContext(dummyAuth);
+const AuthContext = React.createContext(/*dummyAuth*/null);
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -14,6 +14,7 @@ export function AuthProvider({ children }) {
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState('');
+  const [workoutDates, setWorkoutDates] = useState([]);
 
 
   const logout = async () => {
@@ -56,11 +57,30 @@ export function AuthProvider({ children }) {
 
   }, []);
   
+  const addWorkoutDate = (date) => {
+    if (!workoutDates.includes(date)) {
+      setWorkoutDates([...workoutDates, date]);
+    }
+  };
+
+  // Remove a date from the list
+  const removeWorkoutDate = (date) => {
+    setWorkoutDates(workoutDates.filter((d) => d !== date));
+  };
+
+  // Clear all dates
+  const clearWorkoutDates = () => {
+    setWorkoutDates([]);
+  };
+
   const value = {
     currentUser,
     userLoggedIn,
     token,
     loading,
+    workoutDates,
+    addWorkoutDate,
+    removeWorkoutDate,
     logout
   }
 
