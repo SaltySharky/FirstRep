@@ -7,6 +7,8 @@ const SignUp = () => {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isRegistering, setIsRegistering] = useState(false);
@@ -44,6 +46,8 @@ const SignUp = () => {
                             <input
                                 type="text"
                                 placeholder="First name"
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
                                 required
                                 className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                             />
@@ -52,6 +56,8 @@ const SignUp = () => {
                             <input
                                 type="text"
                                 placeholder="Last name"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
                                 required
                                 className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                             />
