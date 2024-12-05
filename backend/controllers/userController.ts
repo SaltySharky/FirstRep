@@ -1,56 +1,26 @@
 import express from "express";
 import asyncHandler from "express-async-handler"
-import admin from "../config/firebaseAdmin"
 import User from "../models/userModel";
 
-// @desc    Register new user
-// @route   POST /api/users/signup
-// @access  Public
+// @desc    Register a user
+// @route   POST /api/users/
+// @access  Private
 export const registerUser = asyncHandler(async (req: express.Request, res: express.Response) => {
-  const { name, email, password } = req.body; // destruct the request
-  if (!name || !email || !password) { // validate request
-    res.status(400)
-    throw new Error("Please enter all info.");
+  if (!req.user) {
+    res.status(401).json({ error: "Unauthorized" });
   }
 
-  // Check if user already exists
-  const userExists = await User.findOne({email}) // find user email in the database
+  // Use the request's body to create new user in MongoDB
+  const user = new User(req.body);
+  const savedUser = await user.save();
+  console.log("User authenticated");
 
-  if (userExists) { // if email is found in the database
-    res.status(400)
-    throw new Error("User already exists");
-  }
-
-  // Create new user
-  const user = await User.create({
-    name,
-    email,
-    password,
-  })
-
-  // Check that user is created
-  if (user) {
-    res.status(201).json({
-      _id: user.id,
-      name: user.name,
-      email: user.email,
-    })
-  } else {
-    res.status(400)
-    throw new Error("Invalid user data");
-  }
+  // Respond with the user data
+  res.status(201).json(savedUser);
 })
 
-// @desc    Authenticate a user
-// @route   POST /api/users/login
-// @access  Public
+// @desc    Login a user
+// @route   POST /api/users/:uid
+// @access  Private
 export const loginUser = asyncHandler(async (req: express.Request, res: express.Response) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) { // validate request
-    res.status(400)
-    throw new Error("Please enter all info.");
-  }
-
-  const user = await User.findOne({email}); // check user email
 })
