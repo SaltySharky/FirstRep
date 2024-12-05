@@ -117,7 +117,7 @@ const WorkoutLog = () => {
             <p className="text-center text-gray-500">No workouts logged yet.</p>
           ) : (
             <ul className="space-y-4">
-              {workouts.map((workout) => (
+              {workouts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((workout) => (
                 <li
                   key={workout.id}
                   className="bg-gray-100 p-4 rounded shadow flex justify-between items-center"

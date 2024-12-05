@@ -4,6 +4,7 @@ import { useAuth } from "../contexts/AuthContext";
 import 'react-calendar/dist/Calendar.css';
 import Navbar from "./Navbar";
 import CustomCalendar from "./Calendar";
+import { console } from "inspector";
 
 /*
 type ValuePiece = Date | null;
@@ -19,17 +20,20 @@ interface Workout {
   }
 
 export function calculateStreak(workouts: Workout[]): number {
+//
     if (!Array.isArray(workouts)) {
-      console.error("Invalid input: workouts must be an array");
+      //console.error("Invalid input: workouts must be an array");
       return 0;
     }
-  
+
     const sortedDates = [...new Set(workouts.map(w => w.date))].sort();
-    console.log(sortedDates);
+    //console.log(sortedDates);
     let streak = 0;
     const today = new Date();
-    today.setTime(today.getTime() - 24*60*60*1000);
-    const yesterday = new Date(today.getTime() - 480*60*1000);
+    today.setTime(today.getTime() - 480*60*1000); //time zone adjusted
+    //console.log(today.toISOString());
+    const yesterday = new Date(today.getTime() - 24*60*60*1000);
+    //console.log(yesterday.toISOString());
 
     const today_string = today.toISOString().substring(0,10);
     const yesterday_string = yesterday.toISOString().substring(0,10);
@@ -39,8 +43,16 @@ export function calculateStreak(workouts: Workout[]): number {
     }
     else {
         streak = 1;
+        const dateDifferenceInDays = (date1: string, date2: string): number => {
+            const d1 = new Date(date1);
+            const d2 = new Date(date2);
+            return Math.round((d1.getTime() - d2.getTime()) / (24 * 60 * 60 * 1000));
+        };
+        
         for (let i = sortedDates.indexOf(yesterday_string); i>0; i--) {
-            if (parseInt(sortedDates[i-1].split("-")[2]) === parseInt(sortedDates[i].split("-")[2]) - 1) {
+
+            const daysDifference = dateDifferenceInDays(sortedDates[i], sortedDates[i - 1]);
+            if (daysDifference === 1) {
                 streak ++;
             }
             else {
@@ -57,16 +69,8 @@ export function calculateStreak(workouts: Workout[]): number {
 
 const ProfilePage = () => {
     const { currentUser } = useAuth();
-    const { workoutDates, workouts, setWorkouts, streak, setStreak } = useAuth();
-    //const [value, onChange] = useState<Value>(new Date());
+    const { workouts, setWorkouts, streak, setStreak } = useAuth();
 
-    /*
-    const workoutDates = [
-        "2024-12-10",
-        "2024-12-15",
-        "2024-12-25"
-      ];
-    */
     useEffect(() => {
         const storedWorkouts = localStorage.getItem("workouts");
         if (storedWorkouts) {
@@ -83,7 +87,6 @@ const ProfilePage = () => {
                 <h1 className="text-2xl font-bold">{currentUser.email}</h1>
                 <p>Workouts: {workouts.map(Workout => Workout.date).length}</p>
                 <p>Streak: {streak}</p>
-                {/*<Calendar onChange={onChange} value={value} />*/}
                 <CustomCalendar workoutDates={workouts.map(Workout => Workout.date)} />
             </div>
         </>
