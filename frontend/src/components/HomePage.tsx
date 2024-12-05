@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Notification from "./Notification";
-
+import { useAuth } from "../contexts/AuthContext";
+import { calculateStreak } from "./ProfilePage";
 const HomePage: React.FC = () => {
   const [showProgressPopup, setShowProgressPopup] = useState(false);
   const [showExercisePopup, setShowExercisePopup] = useState(false);
@@ -12,6 +13,17 @@ const HomePage: React.FC = () => {
   const [exercises, setExercises] = useState([]); // State to hold exercise data
   const [scrapes, setScrapes] = useState([]); // State to hold scrape data
   const [selectedScrape, setSelectedScrape] = useState(null);
+  const { currentUser, streak, setStreak, workouts, setWorkouts } = useAuth();
+
+  //pull user's workouts from local storage
+  useEffect(() => {
+    const storedWorkouts = localStorage.getItem("workouts");
+    if (storedWorkouts) {
+      setWorkouts(JSON.parse(storedWorkouts));
+    }
+  }, []);
+  //calculate user's workout streak
+  setStreak(calculateStreak(workouts));
 
   // Handle progress submission
   const handleProgressSubmit = () => {
@@ -21,6 +33,7 @@ const HomePage: React.FC = () => {
       setProgressInput(""); // Reset input field
     }
   };
+  
   const handleClick = (scrape) => {
     setSelectedScrape(scrape); // Set the selected scrape
     setShowExercisePopup(true); // Show the popup
@@ -63,10 +76,10 @@ const HomePage: React.FC = () => {
       {/* User Progress Section */}
       <div
         className="bg-white rounded-lg shadow-md p-4 mb-6 cursor-pointer"
-        onClick={() => setShowProgressPopup(true)}
+        //onClick={() => setShowProgressPopup(true)}
       >
-        <h2 className="text-lg font-semibold">John’s Progress</h2>
-        <p className="text-gray-600">New {currentStreak} day streak!</p>
+        <h2 className="text-lg font-semibold"> {currentUser.email}'s Progress</h2>
+        <p className="text-gray-600">{streak} day workout streak!</p>
       </div>
 
        {/* Display Exercise List */}

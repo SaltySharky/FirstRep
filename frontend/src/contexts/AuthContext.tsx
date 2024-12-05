@@ -3,10 +3,18 @@ import { auth } from "../firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { dummyAuth } from "../constants";
 
-const AuthContext = React.createContext(dummyAuth);
+const AuthContext = React.createContext(/*dummyAuth*/null);
 
 export function useAuth() {
   return useContext(AuthContext);
+}
+
+interface Workout {
+  id: string; // Unique identifier for each workout
+  name: string;
+  type: string;
+  duration: string;
+  date: string;
 }
 
 export function AuthProvider({ children }) {
@@ -15,6 +23,8 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState('');
   const [workoutDates, setWorkoutDates] = useState([]);
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [streak, setStreak] = useState(0);
 
 
   const logout = async () => {
@@ -72,21 +82,6 @@ export function AuthProvider({ children }) {
     return () => unsubscribe();
   }, [token]);
 
-  const addWorkoutDate = (date) => {
-    if (!workoutDates.includes(date)) {
-      setWorkoutDates([...workoutDates, date]);
-    }
-  };
-
-  // Remove a date from the list
-  const removeWorkoutDate = (date) => {
-    setWorkoutDates(workoutDates.filter((d) => d !== date));
-  };
-
-  // Clear all dates
-  const clearWorkoutDates = () => {
-    setWorkoutDates([]);
-  };
 
   const value = {
     currentUser,
@@ -94,8 +89,10 @@ export function AuthProvider({ children }) {
     token,
     loading,
     workoutDates,
-    addWorkoutDate,
-    removeWorkoutDate,
+    workouts,
+    setWorkouts,
+    streak,
+    setStreak,
     logout
   };
 
