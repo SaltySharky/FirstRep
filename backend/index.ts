@@ -20,7 +20,7 @@ const app = express();
 
 // Middleware for parsing JSON requests
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 // Protect all the routes with verifyToken
 app.use(verifyToken);
