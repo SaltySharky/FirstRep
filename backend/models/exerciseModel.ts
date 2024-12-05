@@ -20,5 +20,4 @@ const exerciseSchema = new mongoose.Schema({
 }, { collection: 'Exercise' }); // Ensure this points to the 'Exercise' collection
 
 const Exercise = mongoose.model('Exercise', exerciseSchema);
-
 export default Exercise;
