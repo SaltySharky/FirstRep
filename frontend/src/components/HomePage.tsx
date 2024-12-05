@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
+import Notification from "./Notification";
 
 const HomePage: React.FC = () => {
   const [showProgressPopup, setShowProgressPopup] = useState(false);
@@ -55,6 +56,7 @@ const HomePage: React.FC = () => {
   return (
     <>
     <Navbar />
+    <Notification />
     <div className="min-h-screen bg-gray-100 p-6">
       <h1 className="text-2xl font-bold text-orange-600 mb-4">Exercise plans for today</h1>
 
