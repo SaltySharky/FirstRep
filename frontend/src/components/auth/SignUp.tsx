@@ -23,9 +23,8 @@ const SignUp = () => {
             setIsRegistering(true);
             if (password == confirmPassword) {
                 try {
-                    const userCredential = await doCreateUserWithEmailAndPassword(email, password); // create user in firebase
-                    const token = await userCredential.user.getIdToken(); // fetch id token
-                    await addUserToMongo(token); // add user to database using token
+                    await doCreateUserWithEmailAndPassword(email, password); // create user in firebase
+                    await addUserToMongo(firstName); // add user to database using token
                 }
                 catch (error) {
                     console.error("Error during user registration:", error);
