@@ -13,7 +13,8 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState('');
+  const [workoutDates, setWorkoutDates] = useState([]);
 
 
   const logout = async () => {
@@ -68,15 +69,33 @@ export function AuthProvider({ children }) {
       setLoading(false); // Once we know the user's state, set loading to false
     });
 
-    // Cleanup onAuthStateChanged listener on component unmount
     return () => unsubscribe();
   }, [token]);
+
+  const addWorkoutDate = (date) => {
+    if (!workoutDates.includes(date)) {
+      setWorkoutDates([...workoutDates, date]);
+    }
+  };
+
+  // Remove a date from the list
+  const removeWorkoutDate = (date) => {
+    setWorkoutDates(workoutDates.filter((d) => d !== date));
+  };
+
+  // Clear all dates
+  const clearWorkoutDates = () => {
+    setWorkoutDates([]);
+  };
 
   const value = {
     currentUser,
     userLoggedIn,
     token,
     loading,
+    workoutDates,
+    addWorkoutDate,
+    removeWorkoutDate,
     logout
   };
 

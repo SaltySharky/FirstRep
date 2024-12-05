@@ -20,13 +20,13 @@ const CustomCalendar = ({ workoutDates }) => {
 
   return (
     <Calendar
-      onChange={handleDateChange}
-      value={value}
-      locale="en-US"
-      tileClassName={({ date, view }) =>
-        // Highlight dates only in month view
-        view === "month" && isHighlighted(date) ? "highlighted-date" : null
-      }
+        onChange={handleDateChange}
+        value={value}
+        locale="en-US"
+        tileClassName={({ date, view }) =>
+          // Highlight dates only in month view
+          view === "month" && isHighlighted(date) ? "highlighted-date" : null
+        }
     />
   );
 };
