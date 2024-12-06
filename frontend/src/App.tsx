@@ -9,6 +9,7 @@ import Landing from './components/Landing';
 import UserPreferences from './components/UserPreferences';
 import ProfilePage from './components/ProfilePage';
 import WorkoutLog from './components/WorkoutLog';
+import PasswordReset from './components/auth/PasswordReset';
 
 function App() {
   const routesArray = [
@@ -42,8 +43,12 @@ function App() {
     },
     {
       path: "/preferences",
-      element: <UserPreferences />,
+      element: <UserPreferences />
     },
+    {
+      path: "/password-reset",
+      element: <PasswordReset />
+    }
   ];
   let routesElement = useRoutes(routesArray);
   return (
