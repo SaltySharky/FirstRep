@@ -13,11 +13,15 @@ const workoutSchema = new mongoose.Schema({
     type: Number,
     required: false,
   },
+  date: {
+    type: Date,
+    required: false,
+  },
   user_id: {
     type: String,
     required: false,
   },
-}, { collection: 'Workouts' }); // Ensure this points to the 'Exercise' collection
+}, { collection: 'Workouts' }); // Ensure this points to the 'Workouts' collection
 
 const Workout = mongoose.model('Workouts', workoutSchema);
 export default Workout;

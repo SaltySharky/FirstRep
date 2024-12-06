@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import { useAuth } from "../contexts/AuthContext";
+import { getWorkouts, logWorkout } from "../services/workoutServices";
 
 interface Workout {
-  id: string; // Unique identifier for each workout
+  _id: string;
   name: string;
   type: string;
   duration: string;
@@ -15,7 +16,7 @@ const WorkoutLog = () => {
   const [showPopup, setShowPopup] = useState(false); // Popup visibility
   const [currentWorkoutId, setCurrentWorkoutId] = useState<string | null>(null); // Track ID of editing workout
   const [formData, setFormData] = useState<Workout>({
-    id: "",
+    _id: "",
     name: "",
     type: "",
     duration: "",
@@ -23,28 +24,27 @@ const WorkoutLog = () => {
   });
   const { workoutDates, addWorkoutDate, removeWorkoutDate } = useAuth();
 
-  // Load workouts from localStorage on mount
+  // Load workouts for the user on mount
   useEffect(() => {
-    const storedWorkouts = localStorage.getItem("workouts");
-    if (storedWorkouts) {
-      setWorkouts(JSON.parse(storedWorkouts));
-    }
-  }, []);
+    const fetchData = async () => {
+      try {
+        const data = await getWorkouts(); // calls the API
+        setWorkouts(data); // Update state with the fetched data
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-  // Save workouts to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem("workouts", JSON.stringify(workouts));
-  }, [workouts]);
+    fetchData();
+  }, []);
 
   // Open popup for adding or editing a workout
   const openPopup = (workout: Workout | null = null) => {
     if (workout) {
-      setCurrentWorkoutId(workout.id); // Set the ID of the workout being edited
       setFormData(workout); // Populate form with existing workout data
     } else {
-      setCurrentWorkoutId(null); // Indicate new workout
       setFormData({
-        id: "",
+        _id: "",
         name: "",
         type: "",
         duration: "",
@@ -58,7 +58,7 @@ const WorkoutLog = () => {
   const closePopup = () => {
     setShowPopup(false);
     setFormData({
-      id: "",
+      _id: "",
       name: "",
       type: "",
       duration: "",
@@ -76,39 +76,17 @@ const WorkoutLog = () => {
   };
 
   // Save workout (add new or update existing)
-  const saveWorkout = () => {
-    if (currentWorkoutId) {
-      // Update existing workout
-      /*
-      if (workouts.find(Workout => Workout.id === currentWorkoutId).date.toString() !== formData.date) {
-        removeWorkoutDate(workouts.find(Workout => Workout.id === currentWorkoutId).date.toString());
-        addWorkoutDate(formData.date.toString());
-      }
-        */
-
-       removeWorkoutDate(workouts.find(Workout => Workout.id === currentWorkoutId).date.toString())
-       
-      setWorkouts((prev) =>
-        prev.map((workout) =>
-          workout.id === currentWorkoutId ? { ...workout, ...formData } : workout
-        )
-      );
-
-      addWorkoutDate(formData.date.toString());
-      
+  const saveWorkout = async () => {
+    if (formData) {
+      const data = await logWorkout(formData);
     } else {
-      // Add new workout
-      const newWorkout = { ...formData, id: Date.now().toString() };
-      setWorkouts((prev) => [...prev, newWorkout]);
-      addWorkoutDate(newWorkout.date.toString());
+      console.log("Form data is null.");
     }
     closePopup();
   };
 
   // Delete a workout
   const deleteWorkout = (id: string) => {
-    removeWorkoutDate(workouts.find(Workout => Workout.id === id).date.toString());
-    setWorkouts((prev) => prev.filter((workout) => workout.id !== id));
   };
 
   return (
@@ -133,13 +111,13 @@ const WorkoutLog = () => {
             <ul className="space-y-4">
               {workouts.map((workout) => (
                 <li
-                  key={workout.id}
+                  key={workout._id}
                   className="bg-gray-100 p-4 rounded shadow flex justify-between items-center"
                 >
                   <div>
                     <p className="font-bold">{workout.name}</p>
                     <p className="text-gray-600">
-                      {workout.type} - {workout.duration} mins
+                      {workout.type} - {workout.duration} min
                     </p>
                     <p className="text-sm text-gray-500">
                       Date: {workout.date}
@@ -154,7 +132,7 @@ const WorkoutLog = () => {
                     </button>
                     <button
                       className="text-red-500 hover:underline"
-                      onClick={() => deleteWorkout(workout.id)}
+                      // onClick={() => deleteWorkout(workout.id)}
                     >
                       Delete
                     </button>
@@ -215,7 +193,7 @@ const WorkoutLog = () => {
 
               {/* Duration */}
               <div>
-                <label className="block font-bold mb-1">Duration (mins)</label>
+                <label className="block font-bold mb-1">Duration (min)</label>
                 <input
                   type="number"
                   name="duration"

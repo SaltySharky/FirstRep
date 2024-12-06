@@ -6,8 +6,8 @@ import userRoutes from "./routes/userRoutes"
 import verifyToken from "./middleware/authMiddleware"
 import { errorHandler } from "./middleware/errorMiddleware";
 import connectDB from "./config/db";
-import exerciseRoutes from "./routes/workoutRoutes";
 import scrapeRoutes from "./routes/scrapeRoutes";
+import workoutRoutes from "./routes/workoutRoutes";
 
 connectDB();
 
@@ -33,7 +33,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/exercises', scrapeRoutes);
 
 // Routes for logging workouts
-//app.use('/api/workouts', workoutRoutes);
+app.use('/api/workouts', workoutRoutes);
 
 // API error handler
 app.use(errorHandler);
