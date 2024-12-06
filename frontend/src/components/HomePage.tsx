@@ -3,39 +3,30 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Notification from "./Notification";
 import { useAuth } from "../contexts/AuthContext";
-import { calculateStreak } from "./ProfilePage";
+import { calculateStreak } from "./calStreaksUtils";
+
 const HomePage: React.FC = () => {
-  const [showProgressPopup, setShowProgressPopup] = useState(false);
   const [showExercisePopup, setShowExercisePopup] = useState(false);
-  const [progressInput, setProgressInput] = useState("");
-  const [currentStreak, setCurrentStreak] = useState(10); // Example value
   const navigate = useNavigate();
   const [exercises, setExercises] = useState([]); // State to hold exercise data
   const [scrapes, setScrapes] = useState([]); // State to hold scrape data
   const [selectedScrape, setSelectedScrape] = useState(null);
+  const [carouselIndex, setCarouselIndex] = useState(0); // State to manage carousel index
   const { currentUser, streak, setStreak, workouts, setWorkouts } = useAuth();
 
-  //pull user's workouts from local storage
+  // Pull user's workouts from local storage
   useEffect(() => {
     const storedWorkouts = localStorage.getItem("workouts");
     if (storedWorkouts) {
       setWorkouts(JSON.parse(storedWorkouts));
     }
   }, []);
-  //calculate user's workout streak
+  // Calculate user's workout streak
   setStreak(calculateStreak(workouts));
 
-  // Handle progress submission
-  const handleProgressSubmit = () => {
-    if (progressInput) {
-      setCurrentStreak(currentStreak + parseInt(progressInput));
-      setShowProgressPopup(false);
-      setProgressInput(""); // Reset input field
-    }
-  };
-  
-  const handleClick = (scrape) => {
-    setSelectedScrape(scrape); // Set the selected scrape
+  // Function to handle clicking "Learn More"
+  const handleClick = (scrape: any) => {
+    setSelectedScrape(scrape); // Set the selected scrape data
     setShowExercisePopup(true); // Show the popup
   };
 
@@ -63,111 +54,148 @@ const HomePage: React.FC = () => {
     };
 
     fetchExercises();
-  }, []); 
-  console.log(exercises); 
-  console.log(scrapes);
+  }, []);
+
+  // Handle carousel navigation
+  const goToNextWorkout = () => {
+    setCarouselIndex((prevIndex) => (prevIndex + 1) % scrapes.length);
+  };
+
+  const goToPrevWorkout = () => {
+    setCarouselIndex(
+      (prevIndex) => (prevIndex - 1 + scrapes.length) % scrapes.length
+    );
+  };
+
   return (
     <>
-    <Navbar />
-    <Notification />
-    <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-2xl font-bold text-orange-600 mb-4">Exercise plans for today</h1>
-
-      {/* User Progress Section */}
-      <div
-        className="bg-white rounded-lg shadow-md p-4 mb-6 cursor-pointer"
-        //onClick={() => setShowProgressPopup(true)}
-      >
-        <h2 className="text-lg font-semibold"> {currentUser.email}'s Progress</h2>
-        <p className="text-gray-600">{streak} day workout streak!</p>
-      </div>
-
-       {/* Display Exercise List */}
-       <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-          <h2 className="text-lg font-semibold mb-4">Today's Exercises</h2>
-          {exercises.length > 0 ? (
-            exercises.map((exercise, index) => (
-              <div key={index} className="mb-4">
-                <h3 className="font-bold">{exercise.name}</h3>
-                <p className="text-gray-600">{exercise.description}</p>
-                <p className="text-sm text-orange-600">Duration: {exercise.duration} mins</p>
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-600">No exercises available for today.</p>
-          )}
-        </div>
-        {/* Scrape  Section */}
-        <div className="flex items-center min-h-screen p-4">
-        {scrapes.map((scrape) => (
-          <div
-            key={scrape._id}
-            className="bg-white rounded-lg shadow-md p-4 mb-4 cursor-pointer max-w-md w-full"
-            onClick={() => handleClick(scrape)} // Pass scrape data on click
-          >
-            <img
-              src={scrape.image_url}
-              alt={scrape.exercise_name}
-              className="rounded-lg mt-2 w-72 h-36 object-cover"
-            />
-            {scrape.image_url_2 && (
-              <img
-                src={scrape.image_url_2}
-                alt={`${scrape.exercise_name} alternate view`}
-                className="rounded-lg mt-2 w-72 h-36 object-cover"
-              />
-            )}
-            <h3 className="font-semibold mt-2 text-lg truncate">{scrape.exercise_name}</h3>
-            <p className="text-sm text-gray-600 mt-2 line-clamp-3">{scrape.description}</p>
+      <Navbar />
+      <Notification />
+      <div className="min-h-screen bg-gray-100 p-6 flex gap-6">
+        {/* Left Section: Today's Exercises */}
+        <div className="w-1/2">
+          <h1 className="text-2xl font-bold text-orange-600 mb-4">
+            Exercise plans for today
+          </h1>
+          <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+            <h2 className="text-lg font-semibold">
+              {currentUser.email}'s Progress
+            </h2>
+            <p className="text-gray-600">{streak} day workout streak!</p>
           </div>
-        ))}
-      </div>
-        
- 
+          {/* Display Exercise List */}
+          <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+            <h2 className="text-lg font-semibold mb-4">Today's Exercises</h2>
+            {exercises.length > 0 ? (
+              exercises.map((exercise, index) => (
+                <div key={index} className="mb-4">
+                  <h3 className="font-bold">{exercise.name}</h3>
+                  <p className="text-gray-600">{exercise.description}</p>
+                  <p className="text-sm text-orange-600">
+                    Duration: {exercise.duration} mins
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-600">No exercises available for today.</p>
+            )}
+          </div>
+        </div>
 
-      {/* Progress Popup */}
-      {showProgressPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-80">
-            <h2 className="text-xl font-bold mb-4">Update Your Progress</h2>
-            <input
-              type="number"
-              value={progressInput}
-              onChange={(e) => setProgressInput(e.target.value)}
-              className="border border-gray-300 rounded-lg p-2 w-full mb-4"
-              placeholder="Enter weeks to add to streak"
-            />
-            <div className="flex justify-end">
+        {/* Right Section: Workouts Carousel */}
+        <div className="w-1/2 flex flex-col items-center justify-center">
+          {/* Carousel Container */}
+          <div className="relative w-full max-w-md bottom-1/4">
+            <h2 className="text-lg font-semibold mb-4 text-center">
+              Exercise Lookup
+            </h2>
+            {/* Carousel Content */}
+            {scrapes.length > 0 && (
+              <div className="bg-white rounded-lg shadow-md p-4 relative z-10">
+                <div className="cursor-pointer">
+                  <img
+                    src={scrapes[carouselIndex].image_url}
+                    alt={scrapes[carouselIndex].exercise_name}
+                    className="rounded-lg mb-4 w-full h-40 object-cover"
+                  />
+                  <h3 className="font-semibold text-lg truncate">
+                    {scrapes[carouselIndex].exercise_name}
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-2 line-clamp-3">
+                    {scrapes[carouselIndex].description}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Carousel Navigation */}
+            <div className="absolute inset-0 flex justify-between items-center px-4 z-30">
               <button
-                onClick={() => setShowProgressPopup(false)}
-                className="text-gray-600 mr-4"
+                onClick={goToPrevWorkout}
+                className="bg-black bg-opacity-50 text-white rounded-full p-2"
               >
-                Cancel
+                &#8592;
               </button>
               <button
-                onClick={handleProgressSubmit}
-                className="bg-orange-500 text-white rounded-lg px-4 py-2"
+                onClick={goToNextWorkout}
+                className="bg-black bg-opacity-50 text-white rounded-full p-2"
               >
-                Submit
+                &#8594;
               </button>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Popup for selected scrape */}
+          {/* Learn More Button */}
+          {scrapes.length > 0 && (
+            <button
+              onClick={() => handleClick(scrapes[carouselIndex])}
+              style={{ position: "relative", top: "-150px" }}
+              className=" bg-orange-500 text-white font-semibold px-6 py-3 rounded-full shadow-lg hover:bg-orange-600"
+            >
+              Learn More
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Popup */}
+      {/* Popup */}
       {showExercisePopup && selectedScrape && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96">
-            <h2 className="text-xl font-bold mb-4">{selectedScrape.exercise_name}</h2>
-            <img
-              src={selectedScrape.image_url}
-              alt={selectedScrape.exercise_name}
-              className="rounded-lg mb-4"
-            />
-            <p className="text-gray-600 mb-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-5 rounded-sm">
+          <div className="bg-white rounded-lg p-10 w-80 md:w-96">
+            <h2 className="text-xl font-bold mb-4">
+              {selectedScrape.exercise_name}
+            </h2>
+
+            {/* Full workout images */}
+            <div className="flex flex-col gap-4">
+              <img
+                src={selectedScrape.image_url}
+                alt={selectedScrape.exercise_name}
+                className="rounded-lg mb-4 w-full object-cover"
+              />
+              {selectedScrape.image_url_2 && (
+                <img
+                  src={selectedScrape.image_url_2}
+                  alt={`${selectedScrape.exercise_name} alternate view`}
+                  className="rounded-lg mb-4 w-full object-cover"
+                />
+              )}
+              {selectedScrape.image_url_3 && (
+                <img
+                  src={selectedScrape.image_url_3}
+                  alt={`${selectedScrape.exercise_name} alternate view`}
+                  className="rounded-lg mb-4 w-full object-cover"
+                />
+              )}
+            </div>
+
+            {/* Full description */}
+            <p className="text-gray-600 mb-4 text-sm">
               {selectedScrape.description}
             </p>
+
+            {/* Close button */}
             <button
               onClick={() => setShowExercisePopup(false)}
               className="bg-orange-500 text-white rounded-lg px-4 py-2 w-full"
@@ -177,8 +205,6 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       )}
-
-    </div>
     </>
   );
 };

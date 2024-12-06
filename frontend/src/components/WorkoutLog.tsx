@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import { useAuth } from "../contexts/AuthContext";
+import { calculateStreak } from "./calStreaksUtils"; // Import streak utility
 
 interface Workout {
-  id: string; // Unique identifier for each workout
+  id: string;
   name: string;
   type: string;
   duration: string;
@@ -11,9 +12,9 @@ interface Workout {
 }
 
 const WorkoutLog = () => {
-  const { workouts, setWorkouts } = useAuth();
-  const [showPopup, setShowPopup] = useState(false); // Popup visibility
-  const [currentWorkoutId, setCurrentWorkoutId] = useState<string | null>(null); // Track ID of editing workout
+  const { workouts, setWorkouts, streak, setStreak } = useAuth();
+  const [showPopup, setShowPopup] = useState(false);
+  const [currentWorkoutId, setCurrentWorkoutId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Workout>({
     id: "",
     name: "",
@@ -33,6 +34,9 @@ const WorkoutLog = () => {
   // Save workouts to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem("workouts", JSON.stringify(workouts));
+    const updatedStreak = calculateStreak(workouts);
+    setStreak(updatedStreak);
+    localStorage.setItem("streak", updatedStreak.toString());
   }, [workouts]);
 
   // Open popup for adding or editing a workout
@@ -83,7 +87,6 @@ const WorkoutLog = () => {
           workout.id === currentWorkoutId ? { ...workout, ...formData } : workout
         )
       );
-      
     } else {
       // Add new workout
       const newWorkout = { ...formData, id: Date.now().toString() };
@@ -150,6 +153,11 @@ const WorkoutLog = () => {
             </ul>
           )}
         </div>
+
+        {/* Streak */}
+        {/* <div className="mt-6">
+          <h2 className="text-xl font-bold">Current Streak: {streak} days</h2>
+        </div> */}
       </div>
 
       {/* Popup */}
