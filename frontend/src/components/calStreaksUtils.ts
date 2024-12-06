@@ -1,27 +1,42 @@
 // streakUtils.ts
 export const calculateStreak = (workouts) => {
-    if (!workouts || workouts.length === 0) {
+    if (!Array.isArray(workouts)) {
+        //console.error("Invalid input: workouts must be an array");
         return 0;
-    }
+      }
+  
+      const sortedDates = [...new Set(workouts.map(w => w.date))].sort();
+      console.log(sortedDates);
+      let streak = 0;
+      const today = new Date();
+      today.setTime(today.getTime() - 480*60*1000); //time zone adjusted
+      const yesterday = new Date(today.getTime() - 24*60*60*1000);
+  
+      const today_string = today.toISOString().substring(0,10);
+      const yesterday_string = yesterday.toISOString().substring(0,10);
 
-    // Sort workouts by date (oldest to newest)
-    workouts.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-    let streak = 1; // Start with the first workout
-    for (let i = 1; i < workouts.length; i++) {
-        const prevDate = new Date(workouts[i - 1].date);
-        const currDate = new Date(workouts[i].date);
-
-        // Check if the current workout is on the next consecutive day
-        const diffInTime = currDate.getTime() - prevDate.getTime();
-        const diffInDays = diffInTime / (1000 * 3600 * 24);
-
-        if (diffInDays === 1) {
-            streak++;
-        } else if (diffInDays > 1) {
-            streak = 1; // Reset streak if days are not consecutive
-        }
-    }
-
-    return streak;
+      if(sortedDates.includes(yesterday_string)) {
+          streak = 1;
+          const dateDifferenceInDays = (date1: string, date2: string): number => {
+              const d1 = new Date(date1);
+              const d2 = new Date(date2);
+              return Math.round((d1.getTime() - d2.getTime()) / (24 * 60 * 60 * 1000));
+          };
+          
+          for (let i = sortedDates.indexOf(yesterday_string); i>0; i--) {
+  
+              const daysDifference = dateDifferenceInDays(sortedDates[i], sortedDates[i - 1]);
+              if (daysDifference === 1) {
+                  streak ++;
+              }
+              else {
+                break;
+              }
+          }
+      }
+  
+      if (sortedDates.includes(today_string)) {
+          streak++;
+      }
+      return streak;
 };
