@@ -27,6 +27,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  total_workouts: {
+    type: Number,
+    default: 0,
+  },
+  streaks: {
+    type: Number,
+    default: 0,
+  }
 },{ collection: 'User'});
   
 

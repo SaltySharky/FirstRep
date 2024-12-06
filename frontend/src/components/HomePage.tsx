@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Notification from "./Notification";
+import { getExercises } from "../services/exerciseServices";
 
 const HomePage: React.FC = () => {
   const [showProgressPopup, setShowProgressPopup] = useState(false);
@@ -12,6 +13,19 @@ const HomePage: React.FC = () => {
   const [exercises, setExercises] = useState([]); // State to hold exercise data
   const [scrapes, setScrapes] = useState([]); // State to hold scrape data
   const [selectedScrape, setSelectedScrape] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getExercises(); // calls the API
+        setScrapes(data); // Update state with the fetched data
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);  // Empty dependency array ensures this only runs once on component mount
 
   // Handle progress submission
   const handleProgressSubmit = () => {
@@ -26,33 +40,6 @@ const HomePage: React.FC = () => {
     setShowExercisePopup(true); // Show the popup
   };
 
-  useEffect(() => {
-    const fetchExercises = async () => {
-      try {
-        const response = await fetch("http://localhost:5002/api/exercises");
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch exercises: ${response.status}`);
-        }
-        const response_scrape = await fetch("http://localhost:5002/api/scrape");
-
-        if (!response_scrape.ok) {
-          throw new Error(`Failed to fetch scrape: ${response_scrape.status}`);
-        }
-
-        const data = await response.json();
-        setExercises(data.exercises);
-        const scrape_data = await response_scrape.json();
-        setScrapes(scrape_data.scrapes);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchExercises();
-  }, []); 
-  console.log(exercises); 
-  console.log(scrapes);
   return (
     <>
     <Navbar />
@@ -69,21 +56,21 @@ const HomePage: React.FC = () => {
         <p className="text-gray-600">New {currentStreak} day streak!</p>
       </div>
 
-       {/* Display Exercise List */}
-       <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-          <h2 className="text-lg font-semibold mb-4">Today's Exercises</h2>
-          {exercises.length > 0 ? (
-            exercises.map((exercise, index) => (
-              <div key={index} className="mb-4">
-                <h3 className="font-bold">{exercise.name}</h3>
-                <p className="text-gray-600">{exercise.description}</p>
-                <p className="text-sm text-orange-600">Duration: {exercise.duration} mins</p>
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-600">No exercises available for today.</p>
-          )}
-        </div>
+       {/*/!* Display Exercise List *!/*/}
+       {/*<div className="bg-white rounded-lg shadow-md p-4 mb-6">*/}
+       {/*   <h2 className="text-lg font-semibold mb-4">Today's Exercises</h2>*/}
+       {/*   {exercises.length > 0 ? (*/}
+       {/*     exercises.map((exercise, index) => (*/}
+       {/*       <div key={index} className="mb-4">*/}
+       {/*         <h3 className="font-bold">{exercise.name}</h3>*/}
+       {/*         <p className="text-gray-600">{exercise.description}</p>*/}
+       {/*         <p className="text-sm text-orange-600">Duration: {exercise.duration} mins</p>*/}
+       {/*       </div>*/}
+       {/*     ))*/}
+       {/*   ) : (*/}
+       {/*     <p className="text-gray-600">No exercises available for today.</p>*/}
+       {/*   )}*/}
+       {/* </div>*/}
         {/* Scrape  Section */}
         <div className="flex items-center min-h-screen p-4">
         {scrapes.map((scrape) => (

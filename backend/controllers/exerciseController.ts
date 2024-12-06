@@ -1,6 +1,6 @@
 import express from "express";
 import asyncHandler from "express-async-handler";
-import Exercise from "../models/exerciseModel";
+import Exercise from "../models/workoutModel";
 import mongoose from "mongoose";
 // @desc    Get all exercises
 // @route   GET /api/exercises
