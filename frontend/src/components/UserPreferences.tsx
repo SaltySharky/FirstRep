@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { updateUserFromMongo } from "../services/userServices";
 
 const questions = [
   {
@@ -44,7 +45,9 @@ const UserPreferences = () => {
     setCurrentStep((prev) => prev + 1);
   };
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
+    console.log(answers);
+    await updateUserFromMongo(answers);
     navigate("/home");
   };
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Notification from "./Notification";
+import { getExercises } from "../services/exerciseServices";
 import { useAuth } from "../contexts/AuthContext";
 import { calculateStreak } from "./calStreaksUtils";
 
@@ -14,13 +15,19 @@ const HomePage: React.FC = () => {
   const [carouselIndex, setCarouselIndex] = useState(0); // State to manage carousel index
   const { currentUser, streak, setStreak, workouts, setWorkouts } = useAuth();
 
-  // Pull user's workouts from local storage
   useEffect(() => {
-    const storedWorkouts = localStorage.getItem("workouts");
-    if (storedWorkouts) {
-      setWorkouts(JSON.parse(storedWorkouts));
-    }
-  }, []);
+    const fetchData = async () => {
+      try {
+        const data = await getExercises(); // calls the API
+        setScrapes(data); // Update state with the fetched data
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);  // Empty dependency array ensures this only runs once on component mount
+
   // Calculate user's workout streak
   setStreak(calculateStreak(workouts));
 
@@ -29,32 +36,6 @@ const HomePage: React.FC = () => {
     setSelectedScrape(scrape); // Set the selected scrape data
     setShowExercisePopup(true); // Show the popup
   };
-
-  useEffect(() => {
-    const fetchExercises = async () => {
-      try {
-        const response = await fetch("http://localhost:5002/api/exercises");
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch exercises: ${response.status}`);
-        }
-        const response_scrape = await fetch("http://localhost:5002/api/scrape");
-
-        if (!response_scrape.ok) {
-          throw new Error(`Failed to fetch scrape: ${response_scrape.status}`);
-        }
-
-        const data = await response.json();
-        setExercises(data.exercises);
-        const scrape_data = await response_scrape.json();
-        setScrapes(scrape_data.scrapes);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchExercises();
-  }, []);
 
   // Handle carousel navigation
   const goToNextWorkout = () => {

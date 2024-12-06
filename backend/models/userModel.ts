@@ -4,6 +4,7 @@ const userSchema = new mongoose.Schema({
   user_id: {
     type: String,
     required: [true, "User id is required"],
+    unique: true,
   },
   email: {
     type: String,
@@ -12,8 +13,28 @@ const userSchema = new mongoose.Schema({
   },
   name: {
     type: String,
-    required: [false, "Name is required"],
-  }, 
+    required: [true, "Name is required"],
+  },
+  level: {
+    type: String,
+    default: "",
+  },
+  frequency: {
+    type: String,
+    default: "",
+  },
+  intensity: {
+    type: String,
+    default: "",
+  },
+  total_workouts: {
+    type: Number,
+    default: 0,
+  },
+  streaks: {
+    type: Number,
+    default: 0,
+  }
 },{ collection: 'User'});
   
 

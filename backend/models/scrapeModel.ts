@@ -18,7 +18,7 @@ const scrapeSchema = new mongoose.Schema({
     required: false,
   },
   
-}, { collection: 'Scrape' }); // Ensure this points to the 'Exercise' collection
+}, { collection: 'Scrape' }); // Ensure this points to the 'Scrape' collection
 
 const Scrape = mongoose.model('Scrape', scrapeSchema);
 export default Scrape;    

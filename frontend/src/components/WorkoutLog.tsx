@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import { useAuth } from "../contexts/AuthContext";
+import { getWorkouts, logWorkout } from "../services/workoutServices";
 import { calculateStreak } from "./calStreaksUtils"; // Import streak utility
 
 interface Workout {
-  id: string;
+  _id: string;
   name: string;
   type: string;
   duration: string;
@@ -16,38 +17,34 @@ const WorkoutLog = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [currentWorkoutId, setCurrentWorkoutId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Workout>({
-    id: "",
+    _id: "",
     name: "",
     type: "",
     duration: "",
     date: "",
   });
 
-  // Load workouts from localStorage on mount
+  // Load workouts for the user on mount
   useEffect(() => {
-    const storedWorkouts = localStorage.getItem("workouts");
-    if (storedWorkouts) {
-      setWorkouts(JSON.parse(storedWorkouts));
-    }
-  }, []);
+    const fetchData = async () => {
+      try {
+        const data = await getWorkouts(); // calls the API
+        setWorkouts(data); // Update state with the fetched data
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-  // Save workouts to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem("workouts", JSON.stringify(workouts));
-    const updatedStreak = calculateStreak(workouts);
-    setStreak(updatedStreak);
-    localStorage.setItem("streak", updatedStreak.toString());
-  }, [workouts]);
+    fetchData();
+  }, []);
 
   // Open popup for adding or editing a workout
   const openPopup = (workout: Workout | null = null) => {
     if (workout) {
-      setCurrentWorkoutId(workout.id); // Set the ID of the workout being edited
       setFormData(workout); // Populate form with existing workout data
     } else {
-      setCurrentWorkoutId(null); // Indicate new workout
       setFormData({
-        id: "",
+        _id: "",
         name: "",
         type: "",
         duration: "",
@@ -61,7 +58,7 @@ const WorkoutLog = () => {
   const closePopup = () => {
     setShowPopup(false);
     setFormData({
-      id: "",
+      _id: "",
       name: "",
       type: "",
       duration: "",
@@ -79,25 +76,17 @@ const WorkoutLog = () => {
   };
 
   // Save workout (add new or update existing)
-  const saveWorkout = () => {
-    if (currentWorkoutId) {
-      // Update existing workout
-      setWorkouts((prev) =>
-        prev.map((workout) =>
-          workout.id === currentWorkoutId ? { ...workout, ...formData } : workout
-        )
-      );
+  const saveWorkout = async () => {
+    if (formData) {
+      const data = await logWorkout(formData);
     } else {
-      // Add new workout
-      const newWorkout = { ...formData, id: Date.now().toString() };
-      setWorkouts((prev) => [...prev, newWorkout]);
+      console.log("Form data is null.");
     }
     closePopup();
   };
 
   // Delete a workout
   const deleteWorkout = (id: string) => {
-    setWorkouts((prev) => prev.filter((workout) => workout.id !== id));
   };
 
   return (
@@ -122,13 +111,13 @@ const WorkoutLog = () => {
             <ul className="space-y-4">
               {workouts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((workout) => (
                 <li
-                  key={workout.id}
+                  key={workout._id}
                   className="bg-gray-100 p-4 rounded shadow flex justify-between items-center"
                 >
                   <div>
                     <p className="font-bold">{workout.name}</p>
                     <p className="text-gray-600">
-                      {workout.type} - {workout.duration} mins
+                      {workout.type} - {workout.duration} min
                     </p>
                     <p className="text-sm text-gray-500">
                       Date: {workout.date}
@@ -143,7 +132,7 @@ const WorkoutLog = () => {
                     </button>
                     <button
                       className="text-red-500 hover:underline"
-                      onClick={() => deleteWorkout(workout.id)}
+                      // onClick={() => deleteWorkout(workout.id)}
                     >
                       Delete
                     </button>
@@ -153,11 +142,6 @@ const WorkoutLog = () => {
             </ul>
           )}
         </div>
-
-        {/* Streak */}
-        {/* <div className="mt-6">
-          <h2 className="text-xl font-bold">Current Streak: {streak} days</h2>
-        </div> */}
       </div>
 
       {/* Popup */}
@@ -209,7 +193,7 @@ const WorkoutLog = () => {
 
               {/* Duration */}
               <div>
-                <label className="block font-bold mb-1">Duration (mins)</label>
+                <label className="block font-bold mb-1">Duration (min)</label>
                 <input
                   type="number"
                   name="duration"
