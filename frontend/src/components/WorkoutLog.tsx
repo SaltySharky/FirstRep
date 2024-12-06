@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import { useAuth } from "../contexts/AuthContext";
 import { getWorkouts, logWorkout } from "../services/workoutServices";
+import { calculateStreak } from "./calStreaksUtils"; // Import streak utility
 
 interface Workout {
   _id: string;
@@ -12,9 +13,9 @@ interface Workout {
 }
 
 const WorkoutLog = () => {
-  const [workouts, setWorkouts] = useState<Workout[]>([]); // Store workouts
-  const [showPopup, setShowPopup] = useState(false); // Popup visibility
-  const [currentWorkoutId, setCurrentWorkoutId] = useState<string | null>(null); // Track ID of editing workout
+  const { workouts, setWorkouts, streak, setStreak } = useAuth();
+  const [showPopup, setShowPopup] = useState(false);
+  const [currentWorkoutId, setCurrentWorkoutId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Workout>({
     _id: "",
     name: "",
@@ -22,7 +23,6 @@ const WorkoutLog = () => {
     duration: "",
     date: "",
   });
-  const { workoutDates, addWorkoutDate, removeWorkoutDate } = useAuth();
 
   // Load workouts for the user on mount
   useEffect(() => {
@@ -109,7 +109,7 @@ const WorkoutLog = () => {
             <p className="text-center text-gray-500">No workouts logged yet.</p>
           ) : (
             <ul className="space-y-4">
-              {workouts.map((workout) => (
+              {workouts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((workout) => (
                 <li
                   key={workout._id}
                   className="bg-gray-100 p-4 rounded shadow flex justify-between items-center"

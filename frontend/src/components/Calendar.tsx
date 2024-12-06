@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Calendar from "react-calendar";
-import 'react-calendar/dist/Calendar.css'; // Import default styles
+//import 'react-calendar/dist/Calendar.css'; // Import default styles
 import './CustomCalendar.css'; // Import custom styles for highlighting
 
 const CustomCalendar = ({ workoutDates }) => {
